@@ -15,8 +15,8 @@
 # !.config/mpd/
 # !.config/mpd/**
 
-!.bashrc
-!.vimrc
+# !.bashrc
+# !.vimrc
 
 #  Исключаем мусор внутри разрешенных папок (опционально)
 .config/nvim/undo/
