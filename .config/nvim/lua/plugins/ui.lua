@@ -7,7 +7,22 @@ return {
 		config = function()
 			require("onedark").setup({
 				style = "darker",
-				term_colors = true,
+				code_style = {
+					-- Change code style ---
+					-- Options are italic, bold, underline, none
+					-- You can configure multiple style with comma separated, For e.g., keywords = 'italic,bold'
+					-- comments = 'italic',
+					comments = "none",
+					keywords = "none",
+					functions = "none",
+					strings = "none",
+					variables = "none",
+				},
+				-- Lualine options --
+				lualine = {
+					-- transparent = false, -- lualine center bar transparency
+					transparent = true, -- lualine center bar transparency
+				},
 
 				-- toggle theme style ---
 				toggle_style_key = "<leader>ts", -- keybind to toggle theme style. Leave it nil to disable it, or set it to a string, for example "<leader>ts"
@@ -109,7 +124,7 @@ return {
 			-- Создаем группу подсветки для разделителей
 			vim.api.nvim_set_hl(0, "LualineGreenSep", {
 				fg = "#98c379",
-				bg = "#282c34",
+				-- bg = "#282c34",
 			})
 
 			require("lualine").setup({
@@ -195,7 +210,6 @@ return {
 	{
 		"akinsho/bufferline.nvim",
 		version = "*",
-		-- event = "VeryLazy",
 		dependencies = "nvim-tree/nvim-web-devicons",
 		opts = {
 			options = {

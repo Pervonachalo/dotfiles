@@ -33,7 +33,6 @@ return {
 				awk_ls = {},
 				bashls = {},
 				bsl_ls = {},
-				-- clangd = {},
 				clangd = {
 					-- Только специфичные для сервера вещи, например кодировка
 					cmd = {
@@ -67,19 +66,20 @@ return {
 
 			-- Список всех инструментов (LSP, линтеры, форматировщики) для Mason
 			local ensure_installed = {
-				-- Инструменты из вашего списка
 				"clang-format",
 				"cmakelang",
-				"eslint_d",
-				"stylua",
-				"selene",
-				"ruff",
-				"prettierd",
 				"editorconfig-checker",
-				"taplo",
+				"eslint_d",
+				"prettierd",
+				"ruff",
+				"rustfmt",
+				"selene",
 				"shellcheck",
+				"shellharden",
 				"shfmt",
 				"sqlfluff",
+				"stylua",
+				"taplo",
 				"vale",
 				"vint",
 			}
@@ -94,6 +94,11 @@ return {
 				ensure_installed = ensure_installed,
 				auto_update = true,
 				run_on_start = true,
+
+				integrations = {
+					["mason-lspconfig"] = true,
+					["mason-nvim-dap"] = true,
+				},
 			})
 
 			-- 4. ТРИГГЕР ДЛЯ АВТОУСТАНОВКИ (Best Practice 2026)
@@ -115,13 +120,13 @@ return {
 			require("fidget").setup({
 
 				opts = {
-					notification = {
-						window = {
-							winblend = 0, -- Непрозрачное окно для лучшей читаемости на Debian
-						},
+					notification = {},
+					window = {
+						-- winblend = 0, -- Непрозрачное окно для лучшей читаемости на Debian
 					},
+
 					logger = {
-						level = vim.log.levels.WARN,
+						-- level = vim.log.levels.WARN,
 					},
 				},
 			})
@@ -281,15 +286,15 @@ return {
 				python = { "ruff_fix", "ruff_format", "ruff_organize_imports" },
 
 				-- Web-технологии: использование демона prettierd для скорости
-				javascript = { "prettierd", "prettier", stop_after_first = true },
-				typescript = { "prettierd", "prettier", stop_after_first = true },
-				javascriptreact = { "prettierd", "prettier", stop_after_first = true },
-				typescriptreact = { "prettierd", "prettier", stop_after_first = true },
-				css = { "prettierd", "prettier", stop_after_first = true },
-				html = { "prettierd", "prettier", stop_after_first = true },
-				json = { "prettierd", "prettier", stop_after_first = true },
-				yaml = { "prettierd", "prettier", stop_after_first = true },
-				markdown = { "prettierd", "prettier", stop_after_first = true },
+				javascript = { "prettierd" },
+				typescript = { "prettierd" },
+				javascriptreact = { "prettierd" },
+				typescriptreact = { "prettierd" },
+				css = { "prettierd" },
+				html = { "prettierd" },
+				json = { "prettierd" },
+				yaml = { "prettierd" },
+				markdown = { "prettierd" },
 
 				-- Системные языки
 				lua = { "stylua" },
@@ -332,7 +337,8 @@ return {
 				},
 				-- В 2026 ruff_format по умолчанию следует правилам pyproject.toml
 				ruff_format = {
-					prepend_args = { "--line-length", "88" },
+					-- prepend_args = { "--line-length", "88" },
+					-- args = { "format", "--line-length", "100", "--stdin-filename", "$FILENAME", "-" },
 				},
 			},
 

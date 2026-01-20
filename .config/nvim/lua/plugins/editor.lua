@@ -30,7 +30,24 @@ return {
 
 					preview = { treesitter = false },
 					mappings = {
-						i = { ["<C-j>"] = "move_selection_next", ["<C-k>"] = "move_selection_previous" },
+						i = {
+							["<C-k>"] = "move_selection_previous",
+							["<C-j>"] = "move_selection_next",
+							-- Настраиваем открытие Diffview по Ctrl+o в режиме вставки
+							["<C-o>"] = function(prompt_bufnr)
+								local selection = require("telescope.actions.state").get_selected_entry()
+								require("telescope.actions").close(prompt_bufnr)
+								vim.cmd("DiffviewOpen " .. selection.value .. "^!")
+							end,
+						},
+						n = {
+							-- То же самое для нормального режима (если нужно)
+							["<C-o>"] = function(prompt_bufnr)
+								local selection = require("telescope.actions.state").get_selected_entry()
+								require("telescope.actions").close(prompt_bufnr)
+								vim.cmd("DiffviewOpen " .. selection.value .. "^!")
+							end,
+						},
 					},
 				},
 				pickers = {
@@ -266,9 +283,69 @@ return {
 	{ "lewis6991/gitsigns.nvim", config = true },
 	{ "s1n7ax/nvim-window-picker", name = "window-picker", config = true },
 	{
-		"echasnovski/mini.nvim",
+		-- "echasnovski/mini.nvim",
+		"nvim-mini/mini.nvim",
+		version = "*",
 		config = function()
 			require("mini.pairs").setup({})
+		end,
+	},
+
+	-- 5. obsidian.nvim
+	{
+		"obsidian-nvim/obsidian.nvim",
+		version = "*",
+		ft = "markdown",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"saghen/blink.cmp",
+		},
+
+		opts = {
+			legacy_commands = false,
+
+			workspaces = {
+				{
+					name = "notes",
+					path = "~/Ins/Obsidian/Notebooks/Notes",
+				},
+			},
+
+			completion = {
+				nvim_cmp = false,
+				min_chars = 2,
+			},
+
+			ui = {
+				enable = true,
+				update_debounce = 200,
+			},
+
+			checkboxes = {
+				[" "] = { char = "  ", hl_group = "ObsidianTodo" },
+				["x"] = { char = "", hl_group = "ObsidianDone" },
+			},
+			checkbox_order = { " ", "x" },
+		},
+		config = function(_, opts)
+			vim.opt_local.conceallevel = 2
+
+			require("obsidian").setup(opts)
+
+			local keymap = vim.keymap.set
+
+			keymap("n", "<leader>os", "<cmd>Obsidian search<CR>", { desc = "Поиск" })
+			keymap("n", "<leader>on", "<cmd>Obsidian new<CR>", { desc = "Новая заметка" })
+			keymap("n", "<leader>ob", "<cmd>Obsidian backlinks<CR>", { desc = "Обратные ссылки" })
+
+			keymap("n", "gf", function()
+				-- pcall мягко пробует выполнить команду, если она не сработает (не ссылка) - делает обычный gf
+				local status, _ = pcall(vim.cmd, "Obsidian follow_link")
+				if not status then
+					return "gf"
+				end
+				return "" -- возвращаем пустую строку, так как команда уже выполнена
+			end, { noremap = false, expr = true })
 		end,
 	},
 }
